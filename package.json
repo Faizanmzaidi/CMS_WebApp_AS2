@@ -1,0 +1,17 @@
+{
+  "name": "cms-web-app-as-2",
+  "version": "1.0.0",
+  "description": "A CMS web application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "engines": {
+    "node": ">=14.x"
+  },
+  "author": "Your Name",
+  "license": "ISC"
+}

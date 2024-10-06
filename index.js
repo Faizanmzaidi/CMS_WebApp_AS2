@@ -36,8 +36,8 @@ app.get('/about', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'about.html'));
 });
 
-// Use a unique port (change this to any port that is not 3000 or 8080)
-const PORT = 3002; 
+// Use the port provided by Vercel or fallback to 3000 if not defined
+const PORT = process.env.PORT || 3001; 
 app.listen(PORT, () => {
     console.log(`Express http server listening on port ${PORT}`);
 });
