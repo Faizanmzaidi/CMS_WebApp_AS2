@@ -1,10 +1,9 @@
-
 // Your Name: Syed Faizan Mehdi Zaidi
 // Your Student Number: 136151230
 // Your Email Address: Sfmzaidi@myseneca.ca
 
-
 const fs = require('fs').promises; // Use promises to handle file reading
+const path = require('path'); // Import the path module
 
 let articles = [];
 let categories = [];
@@ -15,14 +14,14 @@ let categories = [];
  */
 function initialize() {
     return Promise.all([
-        fs.readFile('./data/articles.json', 'utf8')
+        fs.readFile(path.join(__dirname, 'articles.json'), 'utf8') // Updated path
             .then(data => {
                 articles = JSON.parse(data);
             })
             .catch(err => {
                 return Promise.reject('Unable to read articles file: ' + err.message);
             }),
-        fs.readFile('./data/categories.json', 'utf8')
+        fs.readFile(path.join(__dirname, 'categories.json'), 'utf8') // Updated path
             .then(data => {
                 categories = JSON.parse(data);
             })
