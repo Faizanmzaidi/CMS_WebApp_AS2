@@ -14,14 +14,14 @@ let categories = [];
  */
 function initialize() {
     return Promise.all([
-        fs.readFile(path.join(__dirname, 'articles.json'), 'utf8') // Updated path
+        fs.readFile(path.join(__dirname, 'data', 'articles.json'), 'utf8') // Updated path
             .then(data => {
                 articles = JSON.parse(data);
             })
             .catch(err => {
                 return Promise.reject('Unable to read articles file: ' + err.message);
             }),
-        fs.readFile(path.join(__dirname, 'categories.json'), 'utf8') // Updated path
+        fs.readFile(path.join(__dirname, 'data', 'categories.json'), 'utf8') // Updated path
             .then(data => {
                 categories = JSON.parse(data);
             })
