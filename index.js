@@ -1,23 +1,29 @@
 const express = require('express');
+const app = express();
+const fs = require('fs');
 const path = require('path');
 
-const app = express();
-const PORT = 3243; // Use any port that is not 3000 or 8080
-
-// Serve static files from the public folder
-app.use(express.static('public'));
-
-// Redirect route
-app.get('/', (req, res) => {
-    res.redirect('/about');
+// Load articles data
+app.get('/api/articles', (req, res) => {
+    fs.readFile(path.join(__dirname, 'data', 'articles.json'), 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).send('Error reading articles data');
+        }
+        res.json(JSON.parse(data));
+    });
 });
 
-// About route
-app.get('/about', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'about.html'));
+// Load categories data
+app.get('/api/categories', (req, res) => {
+    fs.readFile(path.join(__dirname, 'data', 'categories.json'), 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).send('Error reading categories data');
+        }
+        res.json(JSON.parse(data));
+    });
 });
 
-// Start the server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Express http server listening on port ${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
