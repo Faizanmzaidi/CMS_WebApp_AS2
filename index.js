@@ -32,15 +32,18 @@ app.get('/about', (req, res) => {
 
 // Use the port provided by Vercel or fallback to 3001 if not defined
 const PORT = process.env.PORT || 3001; 
-app.listen(PORT, () => {
-    console.log(`Express http server listening on port ${PORT}`);
-});
 
 // Initialize content service when the server starts
 contentService.initialize()
     .then(() => {
         console.log('Content service initialized successfully.');
+
+        // Start the server only after initialization
+        app.listen(PORT, () => {
+            console.log(`Express http server listening on port ${PORT}`);
+        });
     })
     .catch(err => {
         console.error('Error initializing content service:', err);
+        process.exit(1); // Exit the process if initialization fails
     });

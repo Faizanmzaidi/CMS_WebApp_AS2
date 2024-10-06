@@ -1,10 +1,8 @@
-// content-service.js
 
-// Your Name
-// Your Student Number
-// Your Email Address
-// Created on: [Date]
-// Last Modified: [Date]
+// Your Name: Syed Faizan Mehdi Zaidi
+// Your Student Number: 136151230
+// Your Email Address: Sfmzaidi@myseneca.ca
+
 
 const fs = require('fs').promises; // Use promises to handle file reading
 
