@@ -31,7 +31,7 @@ app.get('/about', (req, res) => {
 });
 
 // Use the port provided by Vercel or fallback to 3001 if not defined
-const PORT = process.env.PORT || 3001; 
+const PORT = process.env.PORT || 3003; 
 
 // Initialize content service when the server starts
 contentService.initialize()
