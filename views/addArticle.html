@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <title>Add New Article</title>
+</head>
+<body>
+    <header>
+        <h1>My Blog - Add New Article</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/api/articles">Articles</a></li>
+                <li><a href="/api/categories">Categories</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/articles/add">Add Article</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Create a New Article</h2>
+        <form id="add-article-form">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required><br><br>
+
+            <label for="content">Content:</label>
+            <textarea id="content" name="content" rows="4" cols="50" required></textarea><br><br>
+
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+                <!-- Categories will be populated here dynamically -->
+            </select><br><br>
+
+            <label for="published">Publish:</label>
+            <input type="checkbox" id="published" name="published"><br><br>
+
+            <button type="submit">Add Article</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>Your Name: Syed Faizan Mehdi Zaidi</p>
+        <p>Student Number: 136151230</p>
+        <p>Email: Sfmzaidi@myseneca.ca</p>
+    </footer>
+
+    <script>
+        // Fetch categories when the page loads
+        window.onload = function() {
+            fetch('/api/categories')
+                .then(response => response.json())
+                .then(categories => {
+                    const categorySelect = document.getElementById('category');
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.name;
+                        option.textContent = category.name;
+                        categorySelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading categories:', error));
+
+            // Handle form submission
+            const form = document.getElementById('add-article-form');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const articleData = {
+                    title: form.title.value,
+                    content: form.content.value,
+                    category: form.category.value,
+                    published: form.published.checked
+                };
+
+                // Send the new article data to the server (you can adjust this based on your API)
+                fetch('/api/articles', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(articleData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Article added successfully!');
+                    form.reset(); // Reset the form fields
+                })
+                .catch(error => console.error('Error adding article:', error));
+            });
+        };
+    </script>
+</body>
+</html>
