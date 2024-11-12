@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
     <title>Add New Article</title>
 </head>
+
 <body>
     <header>
         <h1>My Blog - Add New Article</h1>
         <nav>
             <ul>
-                <li><a href="/">Home</a></li>
+                <li><a href="/about">Home</a></li>
                 <li><a href="/api/articles">Articles</a></li>
                 <li><a href="/api/categories">Categories</a></li>
                 <li><a href="/about">About</a></li>
@@ -49,9 +50,17 @@
 
     <script>
         // Fetch categories when the page loads
+        console.log("JavaScript loaded");
+
         window.onload = function() {
+            // Fetch categories and populate the select dropdown
             fetch('/api/categories')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load categories');
+                    }
+                    return response.json();
+                })
                 .then(categories => {
                     const categorySelect = document.getElementById('category');
                     categories.forEach(category => {
@@ -61,7 +70,10 @@
                         categorySelect.appendChild(option);
                     });
                 })
-                .catch(error => console.error('Error loading categories:', error));
+                .catch(error => {
+                    console.error('Error loading categories:', error);
+                    alert('Failed to load categories');
+                });
 
             // Handle form submission
             const form = document.getElementById('add-article-form');
@@ -75,7 +87,7 @@
                     published: form.published.checked
                 };
 
-                // Send the new article data to the server (you can adjust this based on your API)
+                // Send the new article data to the server
                 fetch('/api/articles', {
                     method: 'POST',
                     headers: {
@@ -83,12 +95,20 @@
                     },
                     body: JSON.stringify(articleData)
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to add article');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     alert('Article added successfully!');
                     form.reset(); // Reset the form fields
                 })
-                .catch(error => console.error('Error adding article:', error));
+                .catch(error => {
+                    console.error('Error adding article:', error);
+                    alert('Error adding article');
+                });
             });
         };
     </script>

@@ -1,6 +1,6 @@
-// Your Name: Syed Faizan Mehdi Zaidi
-// Your Student Number: 136151230
-// Your Email Address: Sfmzaidi@myseneca.ca
+//  Name: Syed Faizan Mehdi Zaidi
+//  Student Number: 136151230
+//  Email Address: Sfmzaidi@myseneca.ca
 
 const fs = require('fs').promises; // Use promises to handle file reading
 const path = require('path'); // Import the path module
@@ -60,9 +60,36 @@ function getCategories() {
     });
 }
 
+/**
+ * Adds a new article to the articles list and saves it.
+ * @param {Object} article - The article data to be added.
+ * @returns {Promise} A promise that resolves with the newly added article.
+ */
+function addArticle(article) {
+    return new Promise((resolve, reject) => {
+        // Assuming article has a 'title', 'content', 'category', and 'published' properties
+        const newArticle = { 
+            id: articles.length + 1, 
+            title: article.title, 
+            content: article.content, 
+            category: article.category, 
+            published: article.published || false 
+        };
+
+        // Add the new article to the array
+        articles.push(newArticle);
+
+        // Save the updated articles to the file
+        fs.writeFile(path.join(__dirname, 'data', 'articles.json'), JSON.stringify(articles, null, 2))
+            .then(() => resolve(newArticle))
+            .catch(err => reject('Error saving the article: ' + err.message));
+    });
+}
+
 // Export the functions for use in index.js
 module.exports = {
     initialize,
     getPublishedArticles,
-    getCategories
+    getCategories,
+    addArticle // Export the addArticle function
 };
