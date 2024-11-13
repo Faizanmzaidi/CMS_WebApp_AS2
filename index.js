@@ -14,10 +14,6 @@ app.get('/', (req, res) => {
     res.redirect('/about');
 });
 
-app.get('/articles/add', (req, res) => {
-    res.redirect('/articles/add');
-});
-
 // Load articles data using the content service
 app.get('/api/articles', (req, res) => {
     contentService.getPublishedArticles() // Call the service function

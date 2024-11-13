@@ -49,5 +49,12 @@
     "content": "this is 8th article ",
     "category": "Programming",
     "published": true
+  },
+  {
+    "id": 8,
+    "title": "new",
+    "content": "new one",
+    "category": "Programming",
+    "published": true
   }
 ]
