@@ -11,6 +11,10 @@ app.use(express.json());
 
 // Redirect from the root route to the /articles/add route
 app.get('/', (req, res) => {
+    res.redirect('/about');
+});
+
+app.get('/articles/add', (req, res) => {
     res.redirect('/articles/add');
 });
 
