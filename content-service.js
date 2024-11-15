@@ -1,7 +1,3 @@
-//  Name: Syed Faizan Mehdi Zaidi
-//  Student Number: 136151230
-//  Email Address: Sfmzaidi@myseneca.ca
-
 const fs = require('fs').promises; // Use promises to handle file reading
 const path = require('path'); // Import the path module
 
@@ -72,45 +68,46 @@ function addArticle(article) {
             title: article.title,
             content: article.content,
             category: article.category,
-            published: article.published || false,
-            featureImage: article.featureImage || '' // Include feature image URL
+            published: article.published,
+            featureImage: article.featureImage,
         };
 
         articles.push(newArticle);
 
+        // Save the updated articles array
         fs.writeFile(path.join(__dirname, 'data', 'articles.json'), JSON.stringify(articles, null, 2))
             .then(() => resolve(newArticle))
-            .catch(err => reject('Error saving the article: ' + err.message));
+            .catch(err => reject('Error saving new article: ' + err.message));
     });
 }
 
 /**
- * Updates an existing article with new data.
+ * Updates an existing article.
  * @param {number} articleId - The ID of the article to be updated.
- * @param {Object} updatedData - The new data to update the article with.
- * @returns {Promise} A promise that resolves with the updated article, or rejects if not found.
+ * @param {Object} updatedData - The new data for the article.
+ * @returns {Promise} A promise that resolves when the article is updated.
  */
 function updateArticle(articleId, updatedData) {
     return new Promise((resolve, reject) => {
         const articleIndex = articles.findIndex(article => article.id === parseInt(articleId));
-        
+
         if (articleIndex === -1) {
             return reject('Article not found');
         }
 
-        // Update the article by merging the old and new data
+        // Merge the existing article data with the updated data
         articles[articleIndex] = {
             ...articles[articleIndex],
             ...updatedData
         };
 
+        // Save the updated articles array
         fs.writeFile(path.join(__dirname, 'data', 'articles.json'), JSON.stringify(articles, null, 2))
             .then(() => resolve(articles[articleIndex]))
-            .catch(err => reject('Error updating the article: ' + err.message));
+            .catch(err => reject('Error updating article: ' + err.message));
     });
 }
 
-// Export the functions for use in index.js
 module.exports = {
     initialize,
     getPublishedArticles,

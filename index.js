@@ -172,7 +172,7 @@ app.post('/articles/edit', upload.single("featureImage"), (req, res) => {
 });
 
 // Use the port provided by Vercel or fallback to 3003 if not defined
-const PORT = process.env.PORT || 3003; 
+const PORT = process.env.PORT || 3003;
 
 // Initialize content service when the server starts
 contentService.initialize()

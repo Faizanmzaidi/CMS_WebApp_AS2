@@ -17,7 +17,7 @@
                 <li><a href="/api/categories">Categories</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/articles/add">Add Article</a></li>
-                <li><a href="/articles/edit?id=1">Edit Article</a></li> <!-- Link to Edit Article -->
+                <li><a href="/articles/edit?id=1">Edit Article</a></li>
             </ul>
         </nav>
     </header>
@@ -26,7 +26,7 @@
         <h2>Edit Article</h2>
 
         <form id="edit-article-form" enctype="multipart/form-data">
-            <input type="hidden" name="id" value="{{article.id}}"> <!-- Pre-fill the article ID -->
+            <input type="hidden" name="id" id="article-id" value="{{article.id}}"> <!-- Hidden ID field -->
 
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" value="{{article.title}}" required><br><br>
@@ -35,9 +35,7 @@
             <textarea id="content" name="content" rows="4" cols="50" required>{{article.content}}</textarea><br><br>
 
             <label for="category">Category:</label>
-            <select id="category" name="category" required>
-                <!-- Categories will be populated here dynamically -->
-            </select><br><br>
+            <select id="category" name="category" required></select><br><br>
 
             <label for="published">Publish:</label>
             <input type="checkbox" id="published" name="published" {{article.published ? 'checked' : ''}}><br><br>
@@ -56,47 +54,62 @@
     </footer>
 
     <script>
-        // Fetch categories when the page loads
+        // Fetch article data and categories when the page loads
         window.onload = function() {
-            // Fetch categories and populate the select dropdown
-            fetch('/api/categories')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to load categories');
-                    }
-                    return response.json();
-                })
-                .then(categories => {
-                    const categorySelect = document.getElementById('category');
-                    categories.forEach(category => {
-                        const option = document.createElement('option');
-                        option.value = category.name;
-                        option.textContent = category.name;
-                        categorySelect.appendChild(option);
-                    });
+            const articleId = new URLSearchParams(window.location.search).get('id'); // Get the article ID from URL
 
-                    // Set the selected category based on the article's category
-                    const category = '{{article.category}}';
-                    categorySelect.value = category;
-                })
-                .catch(error => {
-                    console.error('Error loading categories:', error);
-                    alert('Failed to load categories');
-                });
+            if (articleId) {
+                // Fetch article data based on the article ID
+                fetch(`/api/articles`)
+                    .then(response => response.json())
+                    .then(articles => {
+                        const article = articles.find(a => a.id == articleId); // Find the article by ID
+                        if (article) {
+                            // Populate form fields with the article data
+                            document.getElementById('article-id').value = article.id;
+                            document.getElementById('title').value = article.title;
+                            document.getElementById('content').value = article.content;
+                            document.getElementById('published').checked = article.published;
+                        } else {
+                            alert('Article not found');
+                        }
+                    })
+                    .catch(error => alert('Error loading article data'));
+
+                // Fetch categories and populate the select dropdown
+                fetch('/api/categories')
+                    .then(response => response.json())
+                    .then(categories => {
+                        const categorySelect = document.getElementById('category');
+                        categories.forEach(category => {
+                            const option = document.createElement('option');
+                            option.value = category.name;
+                            option.textContent = category.name;
+                            categorySelect.appendChild(option);
+                        });
+
+                        // Set the selected category based on the article's category
+                        // Assuming category name is used
+                        const category = '{{article.category}}';  // Make sure this is replaced dynamically
+                        categorySelect.value = category;
+                    })
+                    .catch(error => alert('Error loading categories'));
+            } else {
+                alert('Article ID is missing in the URL');
+            }
 
             // Handle form submission with image upload
             const form = document.getElementById('edit-article-form');
             form.addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent default form submission
+                event.preventDefault();
 
                 const formData = new FormData();
-                formData.append('id', form.id.value);
-                formData.append('title', form.title.value);
-                formData.append('content', form.content.value);
-                formData.append('category', form.category.value);
-                formData.append('published', form.published.checked);
+                formData.append('id', form['id'].value);
+                formData.append('title', form['title'].value);
+                formData.append('content', form['content'].value);
+                formData.append('category', form['category'].value);
+                formData.append('published', form['published'].checked);
 
-                // Append the image file, if selected
                 const imageFile = document.getElementById('featureImage').files[0];
                 if (imageFile) {
                     formData.append('featureImage', imageFile);
@@ -107,20 +120,12 @@
                     method: 'POST',
                     body: formData
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to update article');
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     alert('Article updated successfully!');
-                    window.location.href = '/api/articles'; // Redirect to articles list
+                    window.location.href = '/api/articles';
                 })
-                .catch(error => {
-                    console.error('Error updating article:', error);
-                    alert('Error updating article');
-                });
+                .catch(error => alert('Error updating article'));
             });
         };
     </script>
