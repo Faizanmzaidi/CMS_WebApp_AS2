@@ -67,13 +67,14 @@ function getCategories() {
  */
 function addArticle(article) {
     return new Promise((resolve, reject) => {
-        // Assuming article has a 'title', 'content', 'category', and 'published' properties
+        // Assuming article has 'title', 'content', 'category', 'published', and 'featureImage' properties
         const newArticle = { 
             id: articles.length + 1, 
             title: article.title, 
             content: article.content, 
             category: article.category, 
-            published: article.published || false 
+            published: article.published || false,
+            featureImage: article.featureImage || '' // Save the image URL if present
         };
 
         // Add the new article to the array

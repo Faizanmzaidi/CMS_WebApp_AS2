@@ -56,5 +56,12 @@
     "content": "new one",
     "category": "Programming",
     "published": true
+  },
+  {
+    "id": 9,
+    "title": "fgsd",
+    "content": "sdddddd",
+    "category": "Programming",
+    "published": true
   }
 ]
