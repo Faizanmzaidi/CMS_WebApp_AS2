@@ -64,8 +64,22 @@ app.get('/articles/edit', (req, res) => {
         .then(articles => {
             const article = articles.find(a => a.id === parseInt(articleId));
             if (article) {
-                // Send article data to the edit page
-                res.render('editArticle', { article: article }); // Render and pass article data
+                // Send the editArticle.html file and inject the article data as a JavaScript object
+                res.sendFile(path.join(__dirname, 'views', 'editArticle.html'), (err, html) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Error serving the edit article page' });
+                    }
+
+                    // Inject the article data into the HTML using a <script> tag
+                    html = html.replace(
+                        '</body>',
+                        `<script>
+                            window.article = ${JSON.stringify(article)};
+                        </script></body>`
+                    );
+
+                    res.send(html); // Send the modified HTML back to the client
+                });
             } else {
                 res.status(404).json({ message: 'Article not found' });
             }

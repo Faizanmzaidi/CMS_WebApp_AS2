@@ -68,7 +68,7 @@ function getCategories() {
 function addArticle(article) {
     return new Promise((resolve, reject) => {
         const newArticle = {
-            id: articles.length + 1,
+            id: articles.length + 1, // ID should be auto-incremented
             title: article.title,
             content: article.content,
             category: article.category,
@@ -98,6 +98,7 @@ function updateArticle(articleId, updatedData) {
             return reject('Article not found');
         }
 
+        // Update the article by merging the old and new data
         articles[articleIndex] = {
             ...articles[articleIndex],
             ...updatedData

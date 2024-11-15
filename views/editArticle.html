@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="/css/main.css">
     <title>Edit Article</title>
 </head>
+
 <body>
     <header>
         <h1>My Blog - Edit Article</h1>
@@ -23,8 +24,9 @@
 
     <main>
         <h2>Edit Article</h2>
+
         <form id="edit-article-form" enctype="multipart/form-data">
-            <input type="hidden" id="articleId" name="id" value="{{article.id}}">
+            <input type="hidden" name="id" value="{{article.id}}"> <!-- Pre-fill the article ID -->
 
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" value="{{article.title}}" required><br><br>
@@ -34,8 +36,7 @@
 
             <label for="category">Category:</label>
             <select id="category" name="category" required>
-                <option value="{{article.category}}" selected>{{article.category}}</option>
-                <!-- Additional categories can be added dynamically -->
+                <!-- Categories will be populated here dynamically -->
             </select><br><br>
 
             <label for="published">Publish:</label>
@@ -57,8 +58,14 @@
     <script>
         // Fetch categories when the page loads
         window.onload = function() {
+            // Fetch categories and populate the select dropdown
             fetch('/api/categories')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load categories');
+                    }
+                    return response.json();
+                })
                 .then(categories => {
                     const categorySelect = document.getElementById('category');
                     categories.forEach(category => {
@@ -67,8 +74,15 @@
                         option.textContent = category.name;
                         categorySelect.appendChild(option);
                     });
+
+                    // Set the selected category based on the article's category
+                    const category = '{{article.category}}';
+                    categorySelect.value = category;
                 })
-                .catch(error => console.error('Failed to load categories:', error));
+                .catch(error => {
+                    console.error('Error loading categories:', error);
+                    alert('Failed to load categories');
+                });
 
             // Handle form submission with image upload
             const form = document.getElementById('edit-article-form');
@@ -76,7 +90,7 @@
                 event.preventDefault(); // Prevent default form submission
 
                 const formData = new FormData();
-                formData.append('id', document.getElementById('articleId').value); // Add article ID
+                formData.append('id', form.id.value);
                 formData.append('title', form.title.value);
                 formData.append('content', form.content.value);
                 formData.append('category', form.category.value);
@@ -88,6 +102,7 @@
                     formData.append('featureImage', imageFile);
                 }
 
+                // Send the form data to the server
                 fetch('/articles/edit', {
                     method: 'POST',
                     body: formData
@@ -100,7 +115,7 @@
                 })
                 .then(data => {
                     alert('Article updated successfully!');
-                    window.location.href = '/articles'; // Redirect to articles page after update
+                    window.location.href = '/api/articles'; // Redirect to articles list
                 })
                 .catch(error => {
                     console.error('Error updating article:', error);
