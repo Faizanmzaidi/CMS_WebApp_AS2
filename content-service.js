@@ -73,7 +73,7 @@ function addArticle(article) {
             content: article.content,
             category: article.category,
             published: article.published || false,
-            featureImage: article.featureImage || ''
+            featureImage: article.featureImage || '' // Include feature image URL
         };
 
         articles.push(newArticle);
