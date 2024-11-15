@@ -109,6 +109,7 @@
                 .then(data => {
                     alert('Article added successfully!');
                     form.reset(); // Reset the form fields
+                    window.location.href = '/api/articles'; // Redirect to articles list
                 })
                 .catch(error => {
                     console.error('Error adding article:', error);

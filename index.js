@@ -105,7 +105,9 @@ app.post('/articles/add', upload.single("featureImage"), (req, res) => {
 
         // Add article to content-service
         contentService.addArticle(req.body)
-            .then(() => res.redirect('/api/articles'))
+            .then(() => {
+                res.redirect('/api/articles');  // Redirect to articles list after creation
+            })
             .catch(err => res.status(500).json({ message: "Article creation failed", error: err }));
     }
 });
