@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <title>Edit Article</title>
+</head>
+<body>
+    <header>
+        <h1>Edit Article</h1>
+    </header>
+
+    <main>
+        <h2>Edit an Article</h2>
+        <form id="edit-article-form">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required><br><br>
+
+            <label for="content">Content:</label>
+            <textarea id="content" name="content" rows="4" cols="50" required></textarea><br><br>
+
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+                <!-- Categories will be populated here dynamically -->
+            </select><br><br>
+
+            <label for="published">Publish:</label>
+            <input type="checkbox" id="published" name="published"><br><br>
+
+            <button type="submit">Update Article</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>Your Name: Syed Faizan Mehdi Zaidi</p>
+        <p>Student Number: 136151230</p>
+        <p>Email: Sfmzaidi@myseneca.ca</p>
+    </footer>
+
+    <script>
+        window.onload = function() {
+            // Fetch article data for editing
+            const articleId = new URLSearchParams(window.location.search).get('id');
+            fetch(`/api/articles/${articleId}`)
+                .then(response => response.json())
+                .then(article => {
+                    document.getElementById('title').value = article.title;
+                    document.getElementById('content').value = article.content;
+                    document.getElementById('category').value = article.category;
+                    document.getElementById('published').checked = article.published;
+                })
+                .catch(error => console.error('Error loading article:', error));
+
+            // Fetch categories and populate the select dropdown
+            fetch('/api/categories')
+                .then(response => response.json())
+                .then(categories => {
+                    const categorySelect = document.getElementById('category');
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.name;
+                        option.textContent = category.name;
+                        categorySelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading categories:', error));
+
+            // Handle form submission
+            const form = document.getElementById('edit-article-form');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the form from reloading the page
+
+                const articleData = {
+                    title: form.title.value,
+                    content: form.content.value,
+                    category: form.category.value,
+                    published: form.published.checked
+                };
+
+                fetch(`/api/articles/${articleId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(articleData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Article updated successfully!');
+                    window.location.href = '/api/articles'; // Redirect to articles list
+                })
+                .catch(error => console.error('Error updating article:', error));
+            });
+        };
+    </script>
+</body>
+</html>

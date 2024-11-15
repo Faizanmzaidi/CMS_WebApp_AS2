@@ -52,6 +52,29 @@ app.get('/articles/add', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'addArticle.html'));
 });
 
+// New Route to serve the editArticle.html page with pre-filled article data
+app.get('/articles/edit', (req, res) => {
+    const articleId = req.query.id;  // Get the article ID from the query parameter
+    if (!articleId) {
+        return res.status(400).json({ message: 'Article ID is required' });
+    }
+
+    // Get article data for the given article ID
+    contentService.getPublishedArticles()
+        .then(articles => {
+            const article = articles.find(a => a.id === parseInt(articleId));
+            if (article) {
+                // Send article data to the edit page
+                res.sendFile(path.join(__dirname, 'views', 'editArticle.html'), {
+                    article: article // Passing the article to be pre-filled in the form
+                });
+            } else {
+                res.status(404).json({ message: 'Article not found' });
+            }
+        })
+        .catch(err => res.status(500).json({ message: err }));
+});
+
 // POST route to handle new article submission, including image upload
 app.post('/articles/add', upload.single("featureImage"), (req, res) => {
     if (req.file) {
@@ -86,6 +109,43 @@ app.post('/articles/add', upload.single("featureImage"), (req, res) => {
         contentService.addArticle(req.body)
             .then(() => res.redirect('/api/articles'))
             .catch(err => res.status(500).json({ message: "Article creation failed", error: err }));
+    }
+});
+
+// POST route to handle article update with image upload
+app.post('/articles/edit', upload.single("featureImage"), (req, res) => {
+    if (req.file) {
+        let streamUpload = (req) => {
+            return new Promise((resolve, reject) => {
+                let stream = cloudinary.uploader.upload_stream(
+                    (error, result) => {
+                        if (result) resolve(result);
+                        else reject(error);
+                    }
+                );
+                streamifier.createReadStream(req.file.buffer).pipe(stream);
+            });
+        };
+
+        async function upload(req) {
+            let result = await streamUpload(req);
+            return result;
+        }
+
+        upload(req).then((uploaded) => {
+            updateArticle(uploaded.url);
+        }).catch(err => res.status(500).json({ message: "Image upload failed", error: err }));
+    } else {
+        updateArticle("");
+    }
+
+    function updateArticle(imageUrl) {
+        req.body.featureImage = imageUrl;
+
+        // Update article in content-service
+        contentService.updateArticle(req.body)
+            .then(() => res.redirect('/api/articles'))
+            .catch(err => res.status(500).json({ message: "Article update failed", error: err }));
     }
 });
 

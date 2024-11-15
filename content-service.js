@@ -87,10 +87,39 @@ function addArticle(article) {
     });
 }
 
+/**
+ * Updates an existing article with new data.
+ * @param {number} articleId - The ID of the article to be updated.
+ * @param {Object} updatedData - The new data to update the article with.
+ * @returns {Promise} A promise that resolves with the updated article, or rejects if not found.
+ */
+function updateArticle(articleId, updatedData) {
+    return new Promise((resolve, reject) => {
+        // Find the article by ID
+        const articleIndex = articles.findIndex(article => article.id === articleId);
+        
+        if (articleIndex === -1) {
+            return reject('Article not found');
+        }
+
+        // Update the article properties
+        articles[articleIndex] = { 
+            ...articles[articleIndex],
+            ...updatedData  // Merge the updated data
+        };
+
+        // Save the updated articles to the file
+        fs.writeFile(path.join(__dirname, 'data', 'articles.json'), JSON.stringify(articles, null, 2))
+            .then(() => resolve(articles[articleIndex]))
+            .catch(err => reject('Error updating the article: ' + err.message));
+    });
+}
+
 // Export the functions for use in index.js
 module.exports = {
     initialize,
     getPublishedArticles,
     getCategories,
-    addArticle // Export the addArticle function
+    addArticle,
+    updateArticle // Export the new updateArticle function
 };
