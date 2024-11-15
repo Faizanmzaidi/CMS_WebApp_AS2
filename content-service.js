@@ -14,14 +14,14 @@ let categories = [];
  */
 function initialize() {
     return Promise.all([
-        fs.readFile(path.join(__dirname, 'data', 'articles.json'), 'utf8') // Updated path
+        fs.readFile(path.join(__dirname, 'data', 'articles.json'), 'utf8')
             .then(data => {
                 articles = JSON.parse(data);
             })
             .catch(err => {
                 return Promise.reject('Unable to read articles file: ' + err.message);
             }),
-        fs.readFile(path.join(__dirname, 'data', 'categories.json'), 'utf8') // Updated path
+        fs.readFile(path.join(__dirname, 'data', 'categories.json'), 'utf8')
             .then(data => {
                 categories = JSON.parse(data);
             })
@@ -67,20 +67,17 @@ function getCategories() {
  */
 function addArticle(article) {
     return new Promise((resolve, reject) => {
-        // Assuming article has 'title', 'content', 'category', 'published', and 'featureImage' properties
-        const newArticle = { 
-            id: articles.length + 1, 
-            title: article.title, 
-            content: article.content, 
-            category: article.category, 
+        const newArticle = {
+            id: articles.length + 1,
+            title: article.title,
+            content: article.content,
+            category: article.category,
             published: article.published || false,
-            featureImage: article.featureImage || '' // Save the image URL if present
+            featureImage: article.featureImage || ''
         };
 
-        // Add the new article to the array
         articles.push(newArticle);
 
-        // Save the updated articles to the file
         fs.writeFile(path.join(__dirname, 'data', 'articles.json'), JSON.stringify(articles, null, 2))
             .then(() => resolve(newArticle))
             .catch(err => reject('Error saving the article: ' + err.message));
@@ -95,20 +92,17 @@ function addArticle(article) {
  */
 function updateArticle(articleId, updatedData) {
     return new Promise((resolve, reject) => {
-        // Find the article by ID
-        const articleIndex = articles.findIndex(article => article.id === articleId);
+        const articleIndex = articles.findIndex(article => article.id === parseInt(articleId));
         
         if (articleIndex === -1) {
             return reject('Article not found');
         }
 
-        // Update the article properties
-        articles[articleIndex] = { 
+        articles[articleIndex] = {
             ...articles[articleIndex],
-            ...updatedData  // Merge the updated data
+            ...updatedData
         };
 
-        // Save the updated articles to the file
         fs.writeFile(path.join(__dirname, 'data', 'articles.json'), JSON.stringify(articles, null, 2))
             .then(() => resolve(articles[articleIndex]))
             .catch(err => reject('Error updating the article: ' + err.message));
@@ -121,5 +115,5 @@ module.exports = {
     getPublishedArticles,
     getCategories,
     addArticle,
-    updateArticle // Export the new updateArticle function
+    updateArticle
 };

@@ -141,7 +141,7 @@ app.post('/articles/edit', upload.single("featureImage"), (req, res) => {
         req.body.featureImage = imageUrl;
 
         // Update article in content-service
-        contentService.updateArticle(req.body)
+        contentService.updateArticle(req.body.id, req.body) // Ensure you're passing the correct data
             .then(() => res.redirect('/api/articles'))
             .catch(err => res.status(500).json({ message: "Article update failed", error: err }));
     }

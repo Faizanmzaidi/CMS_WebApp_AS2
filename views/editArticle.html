@@ -16,6 +16,7 @@
                 <li><a href="/api/categories">Categories</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/articles/add">Add Article</a></li>
+                <li><a href="/articles/edit?id=1">Edit Article</a></li> <!-- Link to Edit Article -->
             </ul>
         </nav>
     </header>
@@ -54,42 +55,59 @@
     </footer>
 
     <script>
-        // Handle form submission with image upload for editing
-        const form = document.getElementById('edit-article-form');
-        form.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+        // Fetch categories when the page loads
+        window.onload = function() {
+            fetch('/api/categories')
+                .then(response => response.json())
+                .then(categories => {
+                    const categorySelect = document.getElementById('category');
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.name;
+                        option.textContent = category.name;
+                        categorySelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Failed to load categories:', error));
 
-            const formData = new FormData();
-            formData.append('id', document.getElementById('articleId').value); // Add article ID
-            formData.append('title', form.title.value);
-            formData.append('content', form.content.value);
-            formData.append('category', form.category.value);
-            formData.append('published', form.published.checked);
+            // Handle form submission with image upload
+            const form = document.getElementById('edit-article-form');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
 
-            const imageFile = document.getElementById('featureImage').files[0];
-            if (imageFile) {
-                formData.append('featureImage', imageFile);
-            }
+                const formData = new FormData();
+                formData.append('id', document.getElementById('articleId').value); // Add article ID
+                formData.append('title', form.title.value);
+                formData.append('content', form.content.value);
+                formData.append('category', form.category.value);
+                formData.append('published', form.published.checked);
 
-            fetch('/articles/edit', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to update article');
+                // Append the image file, if selected
+                const imageFile = document.getElementById('featureImage').files[0];
+                if (imageFile) {
+                    formData.append('featureImage', imageFile);
                 }
-                return response.json();
-            })
-            .then(data => {
-                alert('Article updated successfully!');
-                window.location.href = '/articles'; // Redirect to articles page after update
-            })
-            .catch(error => {
-                console.error('Error updating article:', error);
-                alert('Error updating article');
+
+                fetch('/articles/edit', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to update article');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('Article updated successfully!');
+                    window.location.href = '/articles'; // Redirect to articles page after update
+                })
+                .catch(error => {
+                    console.error('Error updating article:', error);
+                    alert('Error updating article');
+                });
             });
-        });
+        };
     </script>
 </body>
 </html>
