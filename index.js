@@ -23,7 +23,7 @@ cloudinary.config({
 // Configure multer for handling file uploads in memory
 const upload = multer(); // No disk storage, files are stored in memory
 
-// Redirect from the root route to the /articles/add route
+// Redirect from the root route to the /about route
 app.get('/', (req, res) => {
     res.redirect('/about');
 });
@@ -52,7 +52,7 @@ app.get('/articles/add', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'addArticle.html'));
 });
 
-// New Route to serve the editArticle.html page with pre-filled article data
+// Route to serve the editArticle.html page with pre-filled article data
 app.get('/articles/edit', (req, res) => {
     const articleId = req.query.id;  // Get the article ID from the query parameter
     if (!articleId) {
@@ -65,9 +65,7 @@ app.get('/articles/edit', (req, res) => {
             const article = articles.find(a => a.id === parseInt(articleId));
             if (article) {
                 // Send article data to the edit page
-                res.sendFile(path.join(__dirname, 'views', 'editArticle.html'), {
-                    article: article // Passing the article to be pre-filled in the form
-                });
+                res.render('editArticle', { article: article }); // Render and pass article data
             } else {
                 res.status(404).json({ message: 'Article not found' });
             }
