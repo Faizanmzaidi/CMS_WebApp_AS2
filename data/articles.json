@@ -63,5 +63,13 @@
     "content": "sdddddd",
     "category": "Programming",
     "published": true
+  },
+  {
+    "id": 10,
+    "title": "sdjks",
+    "content": "kcckxj",
+    "category": "Technology",
+    "published": "true",
+    "featureImage": "http://res.cloudinary.com/dgwtvfcvi/image/upload/v1731638251/sgwqypisv9rvwy0wqthd.png"
   }
 ]

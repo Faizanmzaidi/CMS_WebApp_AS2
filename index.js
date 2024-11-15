@@ -75,7 +75,11 @@ app.get('/articles/edit', (req, res) => {
 
 // POST route to handle new article submission, including image upload
 app.post('/articles/add', upload.single("featureImage"), (req, res) => {
+    console.log('Received form data:', req.body); // Log the form data for debugging
+
     if (req.file) {
+        console.log('Received file:', req.file); // Log the file data for debugging
+
         let streamUpload = (req) => {
             return new Promise((resolve, reject) => {
                 let stream = cloudinary.uploader.upload_stream(
@@ -97,7 +101,7 @@ app.post('/articles/add', upload.single("featureImage"), (req, res) => {
             processArticle(uploaded.url);
         }).catch(err => res.status(500).json({ message: "Image upload failed", error: err }));
     } else {
-        processArticle("");
+        processArticle(""); // No image uploaded, proceed with empty image URL
     }
 
     function processArticle(imageUrl) {
@@ -114,7 +118,11 @@ app.post('/articles/add', upload.single("featureImage"), (req, res) => {
 
 // POST route to handle article update with image upload
 app.post('/articles/edit', upload.single("featureImage"), (req, res) => {
+    console.log('Received form data for editing:', req.body); // Log the form data for debugging
+
     if (req.file) {
+        console.log('Received file for editing:', req.file); // Log the file data for debugging
+
         let streamUpload = (req) => {
             return new Promise((resolve, reject) => {
                 let stream = cloudinary.uploader.upload_stream(
@@ -136,7 +144,7 @@ app.post('/articles/edit', upload.single("featureImage"), (req, res) => {
             updateArticle(uploaded.url);
         }).catch(err => res.status(500).json({ message: "Image upload failed", error: err }));
     } else {
-        updateArticle("");
+        updateArticle(""); // No image uploaded, proceed with empty image URL
     }
 
     function updateArticle(imageUrl) {
