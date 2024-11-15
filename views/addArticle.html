@@ -17,7 +17,8 @@
                 <li><a href="/api/categories">Categories</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/articles/add">Add Article</a></li>
-                <li><a href="/articles/edit?id=1">Edit Article</a></li> <!-- Link to Edit Article -->
+                <!-- Assuming this is dynamically updated later in JavaScript -->
+                <li><a href="#" id="edit-article-link" style="display:none;">Edit Article</a></li> 
             </ul>
         </nav>
     </header>
@@ -117,6 +118,18 @@
                 });
             });
         };
+
+        // Dynamically set the Edit Article link if needed
+        function setEditLink(articleId) {
+            const editLink = document.getElementById('edit-article-link');
+            if (articleId) {
+                editLink.style.display = 'inline'; // Show the edit link
+                editLink.href = `/articles/edit?id=${articleId}`;
+            }
+        }
+
+        // Example: Dynamically set an article ID (this can be called when article data is fetched or if you're on the edit page)
+        setEditLink(1);  // Replace `1` with the actual article ID you want to edit
     </script>
 </body>
 </html>
